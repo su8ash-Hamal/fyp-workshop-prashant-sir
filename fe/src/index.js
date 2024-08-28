@@ -5,10 +5,47 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { FaFigma } from "react-icons/fa";
 import SignInPage from "./pages/SignInPage";
+import { Toaster, resolveValue } from "react-hot-toast";
+import RegisterPage from "./pages/RegisterPage";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthRoute } from "./components/AuthRoute";
+import EditProfilePage from "./pages/EditProfilePage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const router = createBrowserRouter([
+  {
+    path: "/register",
+    element: (
+      <AuthRoute>
+        <RegisterPage />
+      </AuthRoute>
+    ),
+  },
+  {
+    path: "/login",
+    element: <AuthRoute children={<SignInPage />} />,
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <h2>Test</h2>,
+      },
+      {
+        path: "/profile",
+        element: <EditProfilePage />,
+      },
+    ],
+  },
+]);
+
 root.render(
   <React.StrictMode>
+    <RouterProvider router={router} />
+
     <a
       href="https://www.figma.com/design/zw7AudlJriu5feL7YHJnE9/FYP-Workshop?node-id=0-1&t=K1i3FrgubB52EQDO-0"
       target="_blank"
@@ -24,8 +61,12 @@ root.render(
     >
       <FaFigma color="white" />
     </a>
-    <SignInPage />
-    {/* <App /> */}
+    <Toaster
+      position="bottom-right"
+      reverseOrder={false}
+      gutter={8}
+      containerClassName=""
+    />
   </React.StrictMode>
 );
 

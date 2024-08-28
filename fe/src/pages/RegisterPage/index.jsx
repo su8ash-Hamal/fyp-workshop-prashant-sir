@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import CustomButton, { ButtonType } from "../../components/Button";
-import "./SignInPage.css";
+import "./RegisterPage.css";
 import CustomInput from "../../components/Input";
 import { guestInstance } from "../../utils/axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const SignInComponent = () => {
-  const navigate = useNavigate();
+const RegisterComponent = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const [incorrectData, setIncorrectData] = useState(null);
+
+  const navigate = useNavigate();
 
   const onUsernameChange = (event) => {
     console.log(event.target.value);
@@ -26,8 +27,13 @@ const SignInComponent = () => {
   };
 
   const onHandelSubmit = () => {
+    if (password.trim().length < 8) {
+      toast.error("Password needs to be greater than 8 in length");
+      return;
+    }
+
     guestInstance
-      .post("/users", {
+      .put("/users", {
         username,
         password,
       })
@@ -39,8 +45,6 @@ const SignInComponent = () => {
             setIncorrectData(response.data.data);
           } else {
             toast.success(response.data.status);
-            document.cookie = "tokenFromServer=" + response.data.data;
-            window.location.reload();
           }
         } else {
           toast.error("Something Went Wrong.");
@@ -55,35 +59,17 @@ const SignInComponent = () => {
 
   return (
     <>
-      <div className="login-main-container">
+      <div className="main-container">
+        
         <div className="left-container">
-          <div className="left-button-container">
-            <h2>
-              Hey There! <br />
-              Good to see you ...
-            </h2>
-
-            <p>Don't have an account?</p>
-            <div className="button-wrapper">
-              <CustomButton
-                className="test"
-                isRounded
-                text={"Sign Up"}
-                onClick={() => {
-                  navigate("/register");
-                }}
-                buttonType={ButtonType.SECONDARY}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="right-container">
+          <h1>FYP</h1>
           <div className="label-container">
-            <label htmlFor="username">Username: </label>
+            <label htmlFor="username"><b>USERNAME</b> </label><br/>
             <CustomInput
-              hint={"Enter your Username"}
+              hint={"username"}
               value={username}
               onChange={onUsernameChange}
+              style={{height: "36px", width:"460px", margin: "24px"}}
             />
           </div>
           {incorrectData && (
@@ -98,18 +84,26 @@ const SignInComponent = () => {
             </p>
           )}
 
-          <div className="label-container">
-            <label htmlFor="password">Password: </label>
+          <div
+            className="label-container"
+            // style={{
+            //   marginTop: "20px",
+            // }}
+          >
+            <label htmlFor="password"><b>PASSWORD</b> </label>
+            <br/>
             <CustomInput
-              hint={"Enter your password"}
+              isPassword={true}
+              hint={"password"}
               value={password}
               onChange={onPasswordChange}
+              style={{height: "36px", width:"460px", margin: "24px"}}
             />
           </div>
           {incorrectData && (
             <p
               style={{
-                color: "red",
+                color: "var(--error)",
                 fontSize: "var(--text)",
                 fontWeight: 600,
               }}
@@ -120,24 +114,48 @@ const SignInComponent = () => {
 
           <div className="button-wrapper">
             <CustomButton
-              text={"Login"}
+              text={"Sign Up"}
               buttonType={ButtonType.PRIMARY}
               isRounded
               onClick={onHandelSubmit}
+              style={{height:"64px", width: "320px"}}
             />
           </div>
+        </div>
+        <div className="right-container">
+        <div className="left-button-container">
+            <h2>
+              Start Your Journey!
+            </h2>
+            <br/>
+            <span>Get Started now!</span>
+
+            <p>Already have an account?</p>
+            <div className="button-wrapper">
+              <CustomButton
+                className="test"
+                isRounded
+                text={"Sign In"}
+                buttonType={ButtonType.SECONDARY}
+                onClick={() => {
+                  navigate("/login");
+                }}
+              />
+            </div>
+          </div>
+          
         </div>
       </div>
     </>
   );
 };
 
-const SignInPage = () => {
+const RegisterPage = () => {
   return (
     <>
-      <SignInComponent />
+      <RegisterComponent />
     </>
   );
 };
 
-export default SignInPage;
+export default RegisterPage;
